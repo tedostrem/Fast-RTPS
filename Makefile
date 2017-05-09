@@ -1,6 +1,8 @@
-.PHONY : arm build
+.PHONY : arm build fastrtpsgen
 
-arm :
+
+arm : fastrtpsgen
+	mkdir -p artifacts
 	docker run -it --rm \
 		-v $(shell pwd):/build \
 		-e HOST_USER=$(shell id -u) \
@@ -16,3 +18,8 @@ cdr :
 	mkdir -p thirdparty/fastcdr/build
 	cd thirdparty/fastcdr/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/build/artifacts -DTHIRDPARTY=ON .. && make && make install
 	sudo chown -R ${HOST_USER}:${HOST_USER} .
+
+fastrtpsgen : 
+	git submodule update --init --recursive
+	docker run --rm -v $(shell pwd):/build -w /build --name gradle gradle:3.5-jdk7-alpine /bin/sh -c "cd /build/fastrtpsgen && gradle jar && cp /build/share/fastrtps/fastrtpsgen.jar /build/artifacts"
+	sudo chown -R $(shell whoami):$(shell whoami) .
