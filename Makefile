@@ -1,7 +1,7 @@
 .PHONY : arm build fastrtpsgen
 
 
-arm : fastrtpsgen
+arm : 
 	docker run -it --rm \
 		-v $(shell pwd):/build \
 		-e HOST_USER=$(shell id -u) \
@@ -10,12 +10,12 @@ arm : fastrtpsgen
 
 rtps :
 	mkdir -p build
-	cd build && cmake -DCMAKE_TOOLCHAIN_FILE=../arm-gnueabi.toolchain.cmake -DCMAKE_INSTALL_PREFIX:PATH=/build/artifacts -DTHIRDPARTY=ON .. && make && make install
+	cd build && cmake -DCMAKE_CURRENT_LIST_DIR=.. -DCMAKE_TOOLCHAIN_FILE=../arm-gnueabi.toolchain.cmake -DCMAKE_INSTALL_PREFIX:PATH=/build/artifacts -DTHIRDPARTY=ON .. && make && make install
 	sudo chown -R ${HOST_USER}:${HOST_USER} .
 
 cdr :
 	mkdir -p thirdparty/fastcdr/build
-	cd thirdparty/fastcdr/build && cmake -DCMAKE_TOOLCHAIN_FILE=../arm-gnueabi.toolchain.cmake -DCMAKE_INSTALL_PREFIX:PATH=/build/artifacts -DTHIRDPARTY=ON .. && make && make install
+	cd thirdparty/fastcdr/build && cmake -DCMAKE_CURRENT_LIST_DIR=.. -DCMAKE_TOOLCHAIN_FILE=../arm-gnueabi.toolchain.cmake -DCMAKE_INSTALL_PREFIX:PATH=/build/artifacts -DTHIRDPARTY=ON .. && make && make install
 	sudo chown -R ${HOST_USER}:${HOST_USER} .
 
 fastrtpsgen : 
