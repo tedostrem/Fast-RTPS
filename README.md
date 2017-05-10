@@ -1,4 +1,4 @@
-# Fork of eProsima Fast RTPS that can compile for ARM
+# Fork of eProsima Fast RTPS that can cross-compile to ARM
 ```
 $ git clone git@github.com:tedostrem/Fast-RTPS.git 
 $ cd Fast-RTPS
