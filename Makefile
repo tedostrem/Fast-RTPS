@@ -20,6 +20,7 @@ arm : ${FASTRTPSGEN_JAR}
 
 deb : ${LIB_OUTPUT} ${FASTRTPSGEN_JAR}
 	fpm -a armhf -f -s dir -t deb --deb-no-default-config-files -C artifacts --name fastrtps --version $(shell git rev-parse --short HEAD) --iteration 1 --description "Fast-RTPS" .
+	sudo chown -R ${HOST_USER}:${HOST_GROUP} .
 
 ${FASTRTPSGEN_JAR} : 
 	mkdir -p ${ARTIFACTS_DIR}/share/fastrtps
