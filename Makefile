@@ -24,8 +24,10 @@ deb : ${LIB_OUTPUT} ${FASTRTPSGEN_JAR}
 
 ${FASTRTPSGEN_JAR} : 
 	mkdir -p ${ARTIFACTS_DIR}/share/fastrtps
+	mkdir -p ${ARTIFACTS_DIR}/bin
 	git submodule update --init --recursive
 	docker run -it --rm -v $(shell pwd):/build -w /build --name gradle gradle:3.5-jdk7-alpine /bin/sh -c "cd /build/fastrtpsgen && gradle jar && cp /build/fastrtpsgen/share/fastrtps/fastrtpsgen.jar /build/${ARTIFACTS_DIR}/share/fastrtps/fastrtpsgen.jar"
+	cp fastrtpsgen/scripts/fastrtpsgen ${ARTIFACTS_DIR}/bin/
 	sudo chown -R $(shell whoami):$(shell whoami) .
 
 clean :
