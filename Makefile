@@ -1,25 +1,20 @@
-.PHONY : arm build fastrtpsgen
+LIB_OUTPUT := artifacts/lib/libfastrtps.so
 
+.PHONY : arm build
+
+build : ${LIB_OUTPUT}
+
+${LIB_OUTPUT} :
+	mkdir -p build
+	cd build && cmake -DTINYXML2_INCLUDE_DIR=../thirdparty/tinyxml2 -DTINYXML2_SOURCE_DIR=../thirdparty/tinyxml2 -DASIO_INCLUDE_DIR=../thirdparty/asio/asio/include -DCMAKE_TOOLCHAIN_FILE=../arm-gnueabi.toolchain.cmake -DCMAKE_INSTALL_PREFIX:PATH=/build/artifacts -DTHIRDPARTY=ON .. && make && make install
+	sudo chown -R ${HOST_USER}:${HOST_USER} .
 
 arm : 
 	docker run -it --rm \
 		-v $(shell pwd):/build \
 		-e HOST_USER=$(shell id -u) \
 		vincross/xcompile \
-		/bin/sh -c "cd /build && make rtps && make cdr"
+		/bin/sh -c "cd /build && make build"
 
-rtps :
-	mkdir -p build
-	cd build && cmake -DCMAKE_CURRENT_LIST_DIR=.. -DCMAKE_TOOLCHAIN_FILE=../arm-gnueabi.toolchain.cmake -DCMAKE_INSTALL_PREFIX:PATH=/build/artifacts -DTHIRDPARTY=ON .. && make && make install
-	sudo chown -R ${HOST_USER}:${HOST_USER} .
-
-cdr :
-	mkdir -p thirdparty/fastcdr/build
-	cd thirdparty/fastcdr/build && cmake -DCMAKE_CURRENT_LIST_DIR=.. -DCMAKE_TOOLCHAIN_FILE=../arm-gnueabi.toolchain.cmake -DCMAKE_INSTALL_PREFIX:PATH=/build/artifacts -DTHIRDPARTY=ON .. && make && make install
-	sudo chown -R ${HOST_USER}:${HOST_USER} .
-
-fastrtpsgen : 
-	mkdir -p artifacts
-	git submodule update --init --recursive
-	docker run --rm -v $(shell pwd):/build -w /build --name gradle gradle:3.5-jdk7-alpine /bin/sh -c "cd /build/fastrtpsgen && gradle jar && cp /build/fastrtpsgen/share/fastrtps/fastrtpsgen.jar /build/artifacts"
-	sudo chown -R $(shell whoami):$(shell whoami) .
+clean :
+	rm -frv build artifacts
