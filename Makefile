@@ -34,7 +34,7 @@ arm : ${FASTRTPSGEN_JAR}
 deb : ${DEB}
 
 ${DEB} : ${LIB_OUTPUT} ${FASTRTPSGEN_JAR}
-	fpm -a armhf -f -s dir -t deb --deb-no-default-config-files -C artifacts --name fastrtps --version $(shell git rev-parse --short HEAD) --iteration 1 --description "Fast-RTPS" -p ${DEB} .
+	fpm -p ${DEB} -a armhf -f -s dir -t deb --deb-no-default-config-files -C artifacts --name fastrtps --version $(shell git rev-parse --short HEAD) --iteration 1 --description "Fast-RTPS" .
 	sudo chown -R ${HOST_USER}:${HOST_GROUP} .
 
 ${FASTRTPSGEN_JAR} : 
@@ -46,4 +46,4 @@ ${FASTRTPSGEN_JAR} :
 	sudo chown -R $(shell id -u):$(shell id -g) .
 
 clean :
-	rm -frv build artifacts
+	rm -frv build artifacts ${DEB}
