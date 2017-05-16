@@ -26,6 +26,7 @@ x86 :
 arm : ${FASTRTPSGEN_JAR} 
 	docker run -it --rm \
 		-v $(shell pwd):/build \
+		-e VERSION=$(shell git rev-parse --short HEAD) \
 		-e HOST_USER=$(shell id -u) \
 		-e HOST_GROUP=$(shell id -g) \
 		vincross/xcompile \
@@ -34,7 +35,7 @@ arm : ${FASTRTPSGEN_JAR}
 deb : ${DEB}
 
 ${DEB} : ${LIB_OUTPUT} ${FASTRTPSGEN_JAR}
-	fpm -p ${DEB} -a armhf -f -s dir -t deb --deb-no-default-config-files -C artifacts --name fastrtps --version $(shell git rev-parse --short HEAD) --iteration 1 --description "Fast-RTPS" .
+	fpm -p ${DEB} -a armhf -f -s dir -t deb --deb-no-default-config-files -C artifacts --name fastrtps --version ${VERSION} --iteration 1 --description "Fast-RTPS" .
 	sudo chown -R ${HOST_USER}:${HOST_GROUP} .
 
 ${FASTRTPSGEN_JAR} : 
