@@ -1,4 +1,4 @@
-DEB := fastrtps.deb
+DEB := fastrtps_${VERSION}-1_armhf.deb
 ARTIFACTS_DIR := artifacts/usr/local/
 LIB_OUTPUT := ${ARTIFACTS_DIR}/lib/libfastrtps.so
 FASTRTPSGEN_JAR := ${ARTIFACTS_DIR}/share/fastrtps/fastrtpsgen.jar
@@ -26,7 +26,7 @@ x86 :
 arm : ${FASTRTPSGEN_JAR} 
 	docker run -it --rm \
 		-v $(shell pwd):/build \
-		-e VERSION=$(shell git rev-parse --short HEAD) \
+		-e VERSION=$(shell git describe --tags --long) \
 		-e HOST_USER=$(shell id -u) \
 		-e HOST_GROUP=$(shell id -g) \
 		vincross/xcompile \
@@ -35,7 +35,7 @@ arm : ${FASTRTPSGEN_JAR}
 deb : ${DEB}
 
 ${DEB} : ${LIB_OUTPUT} ${FASTRTPSGEN_JAR}
-	fpm -p ${DEB} -a armhf -f -s dir -t deb --deb-no-default-config-files -C artifacts --name fastrtps --version ${VERSION} --iteration 1 --description "Fast-RTPS" .
+	fpm -a armhf -f -s dir -t deb --deb-no-default-config-files -C artifacts --name fastrtps --version ${VERSION} --iteration 1 --description "Fast-RTPS" .
 	sudo chown -R ${HOST_USER}:${HOST_GROUP} .
 
 ${FASTRTPSGEN_JAR} : 
