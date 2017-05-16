@@ -1,14 +1,27 @@
+DEB := fastrtps.deb
 ARTIFACTS_DIR := artifacts/usr/local/
 LIB_OUTPUT := ${ARTIFACTS_DIR}/lib/libfastrtps.so
 FASTRTPSGEN_JAR := ${ARTIFACTS_DIR}/share/fastrtps/fastrtpsgen.jar
+
 .PHONY : arm build clean deb
 
 build : ${LIB_OUTPUT}
 
 ${LIB_OUTPUT} :
 	mkdir -p build
-	cd build && cmake -DTINYXML2_INCLUDE_DIR=../thirdparty/tinyxml2 -DTINYXML2_SOURCE_DIR=../thirdparty/tinyxml2 -DASIO_INCLUDE_DIR=../thirdparty/asio/asio/include -DCMAKE_TOOLCHAIN_FILE=../arm-gnueabi.toolchain.cmake -DCMAKE_INSTALL_PREFIX:PATH=/build/${ARTIFACTS_DIR} -DTHIRDPARTY=ON .. && make && make install
+	cd build && cmake -DTINYXML2_INCLUDE_DIR=../thirdparty/tinyxml2 \
+		-DTINYXML2_SOURCE_DIR=../thirdparty/tinyxml2 \
+		-DASIO_INCLUDE_DIR=../thirdparty/asio/asio/include \
+		-DCMAKE_TOOLCHAIN_FILE=../arm-gnueabi.toolchain.cmake \
+		-DCMAKE_INSTALL_PREFIX:PATH=/build/${ARTIFACTS_DIR} \
+		-DTHIRDPARTY=ON .. && make && make install
 	sudo chown -R ${HOST_USER}:${HOST_GROUP} .
+
+x86 :
+	mkdir -p build
+	cd build && cmake \
+		-DCMAKE_INSTALL_PREFIX:PATH=/build/${ARTIFACTS_DIR} \
+		-DTHIRDPARTY=ON .. && make && make install
 
 arm : ${FASTRTPSGEN_JAR} 
 	docker run -it --rm \
@@ -18,8 +31,10 @@ arm : ${FASTRTPSGEN_JAR}
 		vincross/xcompile \
 		/bin/sh -c "cd /build && make build deb"
 
-deb : ${LIB_OUTPUT} ${FASTRTPSGEN_JAR}
-	fpm -a armhf -f -s dir -t deb --deb-no-default-config-files -C artifacts --name fastrtps --version $(shell git rev-parse --short HEAD) --iteration 1 --description "Fast-RTPS" .
+deb : ${DEB}
+
+${DEB} : ${LIB_OUTPUT} ${FASTRTPSGEN_JAR}
+	fpm -a armhf -f -s dir -t deb --deb-no-default-config-files -C artifacts --name fastrtps --version $(shell git rev-parse --short HEAD) --iteration 1 --description "Fast-RTPS" -p ${DEB} .
 	sudo chown -R ${HOST_USER}:${HOST_GROUP} .
 
 ${FASTRTPSGEN_JAR} : 
