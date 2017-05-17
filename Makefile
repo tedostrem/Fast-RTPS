@@ -1,5 +1,5 @@
-DEB := fastrtps_${VERSION}-1_armhf.deb
-ARTIFACTS_DIR := artifacts/usr/local/
+DEB := fastrtps_${VERSION}_armhf.deb
+ARTIFACTS_DIR := artifacts/usr
 LIB_OUTPUT := ${ARTIFACTS_DIR}/lib/libfastrtps.so
 FASTRTPSGEN_JAR := ${ARTIFACTS_DIR}/share/fastrtps/fastrtpsgen.jar
 
