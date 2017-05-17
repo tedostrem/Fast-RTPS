@@ -2,7 +2,7 @@
 ```
 $ git clone git@github.com:tedostrem/Fast-RTPS.git 
 $ cd Fast-RTPS
-$ make arm # Installs into artifacts/
+$ make arm # Spits out a debian package for ARM architecture 
 ```
 
 <a href="http://www.eprosima.com"><img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSd0PDlVz1U_7MgdTe0FRIWD0Jc9_YH-gGi0ZpLkr-qgCI6ZEoJZ5GBqQ" align="left" hspace="8" vspace="2" width="100" height="100" ></a>
